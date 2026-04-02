@@ -6,7 +6,6 @@
     <title>个人画像 · 信管专业</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 全局重置，保证手机端无滚动条溢出 */
         * {
             margin: 0;
             padding: 0;
@@ -17,39 +16,36 @@
         body {
             background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
             min-height: 100vh;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
         
-        /* 卡片宽度自适应手机，最大宽度 500px，左右留白均匀 */
+        /* 卡片基础样式 */
         .profile-card {
-            max-width: 500px;
             width: 100%;
-            margin: 0 auto;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border-radius: 32px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             overflow: hidden;
-            padding: 20px 18px 28px;
             transition: all 0.2s ease;
         }
         
-        /* 头部区域：头像 + 姓名 */
+        /* 手机端样式 (默认) */
+        .profile-card {
+            max-width: 500px;
+            padding: 20px 18px 28px;
+        }
+        
         .header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 24px;
             flex-wrap: wrap;
-        }
-        
-        .avatar-container {
-            position: relative;
-            flex-shrink: 0;
         }
         
         .avatar {
@@ -100,7 +96,6 @@
             display: inline-block;
         }
         
-        /* 信息卡片模块 */
         .info-module {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(8px);
@@ -132,7 +127,6 @@
             font-size: 14px;
         }
         
-        /* 基本信息网格布局 (2列) */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -162,7 +156,6 @@
             word-break: break-word;
         }
         
-        /* 标签云（兴趣、技能） */
         .tag-cloud {
             display: flex;
             flex-wrap: wrap;
@@ -179,7 +172,6 @@
             color: #1f2f47;
         }
         
-        /* 在校状况条目 */
         .promise-item {
             display: flex;
             gap: 12px;
@@ -224,7 +216,7 @@
             color: #6b7a90;
         }
         
-        /* 小屏幕优化 */
+        /* 小屏幕额外优化 (<=480px) */
         @media (max-width: 480px) {
             body {
                 padding: 12px;
@@ -252,6 +244,88 @@
                 font-size: 12px;
             }
         }
+        
+        /* 桌面端适配 (宽度 > 768px) */
+        @media (min-width: 768px) {
+            body {
+                padding: 40px;
+            }
+            .profile-card {
+                max-width: 800px;
+                padding: 32px 36px 40px;
+                border-radius: 48px;
+            }
+            .avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 44px;
+                border-radius: 32px;
+            }
+            .title-section h1 {
+                font-size: 32px;
+            }
+            .badge {
+                font-size: 14px;
+                padding: 6px 16px;
+            }
+            .info-module {
+                padding: 24px;
+                margin-bottom: 24px;
+                border-radius: 32px;
+            }
+            .module-title {
+                font-size: 20px;
+                margin-bottom: 18px;
+            }
+            .module-title i {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+                border-radius: 14px;
+            }
+            .info-grid {
+                gap: 16px;
+            }
+            .info-item {
+                padding: 14px;
+                border-radius: 22px;
+            }
+            .info-label {
+                font-size: 13px;
+            }
+            .info-value {
+                font-size: 16px;
+            }
+            .tag {
+                padding: 8px 20px;
+                font-size: 15px;
+                border-radius: 40px;
+            }
+            .promise-item {
+                padding: 18px;
+                gap: 16px;
+                border-radius: 28px;
+            }
+            .promise-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+                border-radius: 20px;
+            }
+            .promise-text {
+                font-size: 16px;
+            }
+            .footer-note {
+                font-size: 13px;
+            }
+        }
+        
+        /* 超大屏幕 (>1200px) 可进一步限制最大宽度，保持阅读舒适 */
+        @media (min-width: 1200px) {
+            .profile-card {
+                max-width: 900px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -272,14 +346,13 @@
                     return res.json();
                 })
                 .then(data => {
-                    // 确保数据是数组
                     const student = data.find(s => s.id == studentId);
                     if (!student) {
                         document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">未找到该学生信息</div>';
                         return;
                     }
 
-                    // 处理技能和兴趣（可能是字符串或数组）
+                    // 处理技能和兴趣
                     let skillArray = [];
                     let interestArray = [];
                     if (student.skills) {
@@ -291,12 +364,11 @@
                         else interestArray = student.interests.split(',').map(s => s.trim()).filter(s => s);
                     }
                     
-                    // 处理换行符
                     const activitiesText = (student.activities || '无').replace(/\n/g, '；').replace(/\r/g, '');
                     
                     const html = `
                         <div class="header">
-                            <div class="avatar-container">
+                            <div class="avatar-container" style="position: relative;">
                                 <div class="avatar">${student.avatarInitial || student.name.substring(0,2).toUpperCase()}</div>
                                 <span class="status-dot"></span>
                             </div>
@@ -306,7 +378,6 @@
                             </div>
                         </div>
 
-                        <!-- 基本信息模块 -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-user-circle"></i> 基本信息</div>
                             <div class="info-grid">
@@ -319,7 +390,6 @@
                             </div>
                         </div>
 
-                        <!-- 兴趣爱好 -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-heart"></i> 兴趣爱好</div>
                             <div class="tag-cloud">
@@ -327,7 +397,6 @@
                             </div>
                         </div>
 
-                        <!-- 技能特长 -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-cog"></i> 技能特长</div>
                             <div class="tag-cloud">
@@ -335,7 +404,6 @@
                             </div>
                         </div>
 
-                        <!-- 在校状况 -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-chart-line"></i> 在校状况</div>
                             <div class="promise-item">
