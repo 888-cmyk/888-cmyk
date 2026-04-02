@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
         body {
             background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
@@ -24,12 +24,9 @@
         .profile-card {
             max-width: 500px;
             width: 100%;
-            margin: 0 auto;
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             border-radius: 40px;
-            box-shadow: 0 25px 50px -8px rgba(0, 20, 40, 0.25);
-            overflow: hidden;
             padding: 24px 20px 30px;
         }
         .header {
@@ -180,40 +177,32 @@
     </style>
 </head>
 <body>
-    <div class="profile-card" id="profileCard">
-        <div style="text-align: center; padding: 40px;">加载中...</div>
-    </div>
+    <div class="profile-card" id="profileCard">加载中...</div>
 
     <script>
-        // 获取 URL 中的 id 参数（例如 ?id=202411001）
         const urlParams = new URLSearchParams(window.location.search);
         const studentId = urlParams.get('id');
 
         if (!studentId) {
             document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">未指定学生ID</div>';
         } else {
-            // 加载 students.json 文件
             fetch('students.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('无法加载 students.json');
-                    }
-                    return response.json();
+                .then(res => {
+                    if (!res.ok) throw new Error('无法加载数据');
+                    return res.json();
                 })
                 .then(data => {
-                    // 根据 id 查找学生
                     const student = data.find(s => s.id == studentId);
                     if (!student) {
                         document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">未找到该学生信息</div>';
                         return;
                     }
 
-                    // 处理技能和兴趣（可能是数组或逗号分隔的字符串）
-                    const skillArray = Array.isArray(student.skills) ? student.skills : (student.skills ? student.skills.split(',') : []);
-                    const interestArray = Array.isArray(student.interests) ? student.interests : (student.interests ? student.interests.split(',') : []);
+                    // 处理技能和兴趣（字符串转数组）
+                    const skillArray = student.skills ? student.skills.split(',').map(s=>s.trim()) : [];
+                    const interestArray = student.interests ? student.interests.split(',').map(s=>s.trim()) : [];
 
-                    // 构建动态 HTML
-                    let html = `
+                    const html = `
                         <div class="header">
                             <div class="avatar-container">
                                 <div class="avatar">${student.avatarInitial || student.name.substring(0,2).toUpperCase()}</div>
@@ -221,49 +210,51 @@
                             </div>
                             <div class="title-section">
                                 <h1>${student.name} · 个人画像</h1>
-                                <span class="badge"><i class="fas fa-graduation-cap"></i> 信管专业</span>
+                                <span class="badge"><i class="fas fa-graduation-cap"></i> 信管实验班</span>
                             </div>
                         </div>
-                        
+
+                        <!-- 基本信息模块 -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-user-circle"></i> 基本信息</div>
                             <div class="info-grid">
                                 <div class="info-item"><div class="info-label">学号</div><div class="info-value">${student.id}</div></div>
+                                <div class="info-item"><div class="info-label">性别</div><div class="info-value">${student.gender || '未知'}</div></div>
                                 <div class="info-item"><div class="info-label">籍贯</div><div class="info-value">${student.hometown}</div></div>
-                                ${student.mbti ? `<div class="info-item"><div class="info-label">MBTI</div><div class="info-value">${student.mbti}</div></div>` : ''}
+                                <div class="info-item"><div class="info-label">政治面貌</div><div class="info-value">${student.politicalStatus || '群众'}</div></div>
+                                <div class="info-item"><div class="info-label">宿舍号</div><div class="info-value">${student.dormitory || '未知'}</div></div>
+                                ${student.contact ? `<div class="info-item"><div class="info-label">联系电话</div><div class="info-value">${student.contact}</div></div>` : ''}
                             </div>
                         </div>
-                        
+
+                        <!-- 兴趣与技能 -->
                         <div class="info-module">
-                            <div class="module-title"><i class="fas fa-heart"></i> 性格与兴趣</div>
+                            <div class="module-title"><i class="fas fa-heart"></i> 兴趣爱好</div>
                             <div class="tag-cloud">
-                                ${interestArray.map(i => `<span class="tag">${i.trim()}</span>`).join('')}
+                                ${interestArray.map(i => `<span class="tag">${i}</span>`).join('')}
                             </div>
                         </div>
-                        
+
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-cog"></i> 技能特长</div>
                             <div class="tag-cloud">
-                                ${skillArray.map(s => `<span class="tag">${s.trim()}</span>`).join('')}
+                                ${skillArray.map(s => `<span class="tag">${s}</span>`).join('')}
                             </div>
                         </div>
-                        
+
+                        <!-- 在校状况（高光时刻 + 干部经历） -->
                         <div class="info-module">
                             <div class="module-title"><i class="fas fa-chart-line"></i> 在校状况</div>
                             <div class="promise-item">
-                                <div class="promise-icon"><i class="fas fa-graduation-cap"></i></div>
-                                <div class="promise-text"><strong>📚 学业成绩</strong><br>${student.grades || '暂无'}</div>
-                            </div>
-                            <div class="promise-item">
-                                <div class="promise-icon"><i class="fas fa-calendar-alt"></i></div>
-                                <div class="promise-text"><strong>🎉 学校活动</strong><br>${student.activities || '暂无'}</div>
+                                <div class="promise-icon"><i class="fas fa-star"></i></div>
+                                <div class="promise-text"><strong>✨ 高光时刻</strong><br>${student.grades || '暂无'}</div>
                             </div>
                             <div class="promise-item">
                                 <div class="promise-icon"><i class="fas fa-users"></i></div>
-                                <div class="promise-text"><strong>🚩 社团动态</strong><br>${student.club || '暂无'}</div>
+                                <div class="promise-text"><strong>📋 学生干部经历</strong><br>${(student.activities || '无').replace(/\n/g, '；')}</div>
                             </div>
                         </div>
-                        
+
                         <hr>
                         <div class="footer-note">
                             <i class="fas fa-mobile-alt"></i> 个人画像 · 数据实时更新
@@ -271,9 +262,9 @@
                     `;
                     document.getElementById('profileCard').innerHTML = html;
                 })
-                .catch(error => {
-                    console.error('加载数据失败:', error);
-                    document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">数据加载失败，请稍后重试</div>';
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">数据加载失败，请检查网络或稍后重试</div>';
                 });
         }
     </script>
