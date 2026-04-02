@@ -1,0 +1,268 @@
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>信管专业 · 个人画像导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 这里粘贴你原来导航页的完整 CSS 样式（从之前的代码里复制） */
+        /* 由于篇幅，我假设你已经保留，请复制你原有样式到此处 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(115deg, #1e2b4a, #2c3e6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #4a627a;
+            font-size: 16px;
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .stat-item {
+            flex: 1;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3b5a;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #5f7a9a;
+        }
+        .search-box {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 60px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eef3fc;
+        }
+        .search-box i {
+            color: #8aa0bc;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+            padding: 12px 0;
+        }
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .student-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 20px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            cursor: pointer;
+        }
+        .student-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .card-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 15px;
+        }
+        .student-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a2c42;
+            margin-bottom: 8px;
+        }
+        .student-card p {
+            font-size: 13px;
+            color: #5f7a9a;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .student-card p i {
+            width: 20px;
+            color: #3f6b9c;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .tag {
+            background: rgba(67, 108, 145, 0.12);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #2c5a7a;
+        }
+        .no-result {
+            text-align: center;
+            padding: 60px;
+            color: #6c86a3;
+            font-size: 16px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 13px;
+            color: #8aa0bc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-users"></i> 信管专业 · 个人画像导航</h1>
+        <p>点击卡片查看详细画像 | 数据动态更新</p >
+    </div>
+    
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-label">总人数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="visibleCount">0</div>
+            <div class="stat-label">当前显示</div>
+        </div>
+    </div>
+    
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="按姓名、学号、技能或地区搜索...">
+    </div>
+    
+    <div class="student-grid" id="studentGrid">
+        <div class="no-result">加载数据中...</div>
+    </div>
+    
+    <footer>
+        <i class="fas fa-database"></i> 数据来源：学生档案 | 每学期更新
+    </footer>
+</div>
+
+<script>
+    let studentsData = []; // 存储从 JSON 加载的数据
+
+    // 渲染网格
+    function renderStudents(filterText) {
+        const grid = document.getElementById('studentGrid');
+        const searchTerm = filterText.toLowerCase().trim();
+        
+        let filtered = studentsData;
+        if (searchTerm !== '') {
+            filtered = studentsData.filter(s => 
+                s.name.toLowerCase().includes(searchTerm) ||
+                s.id.toLowerCase().includes(searchTerm) ||
+                s.hometown.toLowerCase().includes(searchTerm) ||
+                (s.skills && s.skills.some(skill => skill.toLowerCase().includes(searchTerm)))
+            );
+        }
+        
+        document.getElementById('totalCount').innerText = studentsData.length;
+        document.getElementById('visibleCount').innerText = filtered.length;
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="no-result">😢 没有找到符合条件的同学，试试其他关键词~</div>';
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(s => {
+            // 技能和兴趣可能是数组，也可能是字符串，这里做兼容
+            let skillArray = Array.isArray(s.skills) ? s.skills : (s.skills ? s.skills.split(',') : []);
+            let interestArray = Array.isArray(s.interests) ? s.interests : (s.interests ? s.interests.split(',') : []);
+            const skillTags = skillArray.map(skill => `<span class="tag">${skill.trim()}</span>`).join('');
+            const interestTags = interestArray.map(interest => `<span class="tag">${interest.trim()}</span>`).join('');
+            
+            html += `
+                <div class="student-card" onclick="window.location.href='student.html?id=${encodeURIComponent(s.id)}'">
+                    <div class="card-avatar">${s.avatarInitial || s.name.substring(0,2).toUpperCase()}</div>
+                    <h3>${s.name}</h3>
+                    <p><i class="fas fa-id-card"></i> ${s.id}</p >
+                    <p><i class="fas fa-map-marker-alt"></i> ${s.hometown}</p >
+                    <div class="tags">
+                        ${skillTags}
+                        ${interestTags}
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+    }
+    
+    // 监听搜索输入
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        renderStudents(e.target.value);
+    });
+    
+    // 加载 JSON 数据
+    fetch('students.json')
+        .then(response => response.json())
+        .then(data => {
+            studentsData = data;
+            renderStudents('');
+        })
+        .catch(error => {
+            console.error('加载数据失败:', error);
+            document.getElementById('studentGrid').innerHTML = '<div class="no-result">❌ 数据加载失败，请稍后重试</div>';
+        });
+</script>
+</body>
+</html>
