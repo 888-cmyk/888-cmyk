@@ -54,7 +54,6 @@
             font-size: 14px;
             color: #5f7a9a;
         }
-        /* 专业筛选按钮 */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -119,7 +118,15 @@
             transform: translateY(-4px);
             background: rgba(255,255,255,0.9);
         }
+        /* 头像样式（支持图片） */
         .card-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 20px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .card-avatar-fallback {
             width: 50px;
             height: 50px;
             background: linear-gradient(135deg, #2b5876, #4e4376);
@@ -235,12 +242,10 @@
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         let filtered = studentsData;
 
-        // 专业筛选
         if (currentMajor !== 'all') {
             filtered = filtered.filter(s => s.major === currentMajor);
         }
 
-        // 搜索筛选
         if (searchTerm !== '') {
             filtered = filtered.filter(s => 
                 (s.name && s.name.toLowerCase().includes(searchTerm)) ||
@@ -266,9 +271,17 @@
             const interestArray = s.interests ? s.interests.split(',').map(t => t.trim()) : [];
             const allTags = [...skillArray, ...interestArray];
             const tagHtml = allTags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            // 头像部分：如果有照片链接就显示照片，否则显示字母后备
+            const avatarHtml = s.avatarUrl ? `
+                < img class="card-avatar" src="${s.avatarUrl}" alt="${s.name}" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="card-avatar-fallback" style="display: none;">${s.avatarInitial || s.name.substring(0,2).toUpperCase()}</div>
+            ` : `
+                <div class="card-avatar-fallback">${s.avatarInitial || s.name.substring(0,2).toUpperCase()}</div>
+            `;
             html += `
                 <div class="student-card" onclick="window.location.href='student.html?id=${encodeURIComponent(s.id)}'">
-                    <div class="card-avatar">${s.avatarInitial || s.name.substring(0,2).toUpperCase()}</div>
+                    ${avatarHtml}
                     <h3>${s.name}</h3>
                     <p><i class="fas fa-id-card"></i> ${s.id}</p >
                     <p><i class="fas fa-map-marker-alt"></i> ${s.hometown || '未知'}</p >
@@ -280,7 +293,6 @@
         grid.innerHTML = html;
     }
 
-    // 专业筛选按钮事件
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -290,7 +302,6 @@
         });
     });
 
-    // 搜索框事件
     document.getElementById('searchInput').addEventListener('input', () => renderStudents());
 
     loadData();
