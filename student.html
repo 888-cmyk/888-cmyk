@@ -2,327 +2,38 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>个人画像 · 管理学院B部</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>学生详情</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
-        .profile-card {
-            max-width: 500px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            padding: 20px 18px 28px;
-            transition: all 0.2s ease;
-        }
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .avatar-container {
-            position: relative;
-        }
-        .avatar-img {
-            width: 70px;
-            height: 70px;
-            border-radius: 28px;
-            object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-        .avatar-fallback {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #2b5876, #4e4376);
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 600;
-            color: white;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            border: 2px solid white;
-        }
-        .status-dot {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            width: 14px;
-            height: 14px;
-            background: #4cd964;
-            border: 2px solid white;
-            border-radius: 50%;
-        }
-        .title-section h1 {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(115deg, #1e2b4a, #2c3e6e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 6px;
-        }
-        .badge {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(4px);
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1e2b4a;
-            display: inline-block;
-        }
-        .info-module {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 18px;
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        .module-title {
-            font-size: 17px;
-            font-weight: 650;
-            color: #162b40;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .module-title i {
-            width: 30px;
-            height: 30px;
-            background: white;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2b5f8a;
-            font-size: 14px;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .info-item {
-            background: white;
-            border-radius: 18px;
-            padding: 10px;
-            border: 1px solid #eef3fc;
-        }
-        .info-label {
-            font-size: 11px;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-        .info-value {
-            font-weight: 600;
-            font-size: 14px;
-            color: #0c1a2b;
-            word-break: break-word;
-        }
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .tag {
-            background: white;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid #eef3fc;
-            color: #1f2f47;
-        }
-        .promise-item {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 14px;
-            background: white;
-            padding: 12px;
-            border-radius: 20px;
-            align-items: flex-start;
-        }
-        .promise-icon {
-            width: 36px;
-            height: 36px;
-            background: #f0f7ff;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1f5090;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-        .promise-text {
-            font-weight: 500;
-            color: #11212e;
-            font-size: 13px;
-            line-height: 1.4;
-            flex: 1;
-        }
-        hr {
-            margin: 20px 0 16px;
-            border: none;
-            height: 1px;
-            background: linear-gradient(to right, #ffffff, #b3c7e0, #ffffff);
-        }
-        .footer-note {
-            text-align: center;
-            font-size: 11px;
-            color: #6b7a90;
-        }
-        @media (max-width: 480px) {
-            body { padding: 12px; }
-            .profile-card { padding: 16px; }
-            .avatar-img, .avatar-fallback { width: 60px; height: 60px; font-size: 28px; border-radius: 24px; }
-            .title-section h1 { font-size: 20px; }
-            .info-grid { gap: 8px; }
-            .info-item { padding: 8px; }
-            .tag { padding: 5px 12px; font-size: 12px; }
-        }
-        @media (min-width: 768px) {
-            .profile-card { max-width: 800px; padding: 32px 36px 40px; border-radius: 48px; }
-            .avatar-img, .avatar-fallback { width: 90px; height: 90px; font-size: 44px; border-radius: 32px; }
-            .title-section h1 { font-size: 32px; }
-            .badge { font-size: 14px; padding: 6px 16px; }
-            .info-module { padding: 24px; margin-bottom: 24px; border-radius: 32px; }
-            .module-title { font-size: 20px; margin-bottom: 18px; }
-            .module-title i { width: 36px; height: 36px; font-size: 18px; border-radius: 14px; }
-            .info-grid { gap: 16px; }
-            .info-item { padding: 14px; border-radius: 22px; }
-            .info-label { font-size: 13px; }
-            .info-value { font-size: 16px; }
-            .tag { padding: 8px 20px; font-size: 15px; border-radius: 40px; }
-            .promise-item { padding: 18px; gap: 16px; border-radius: 28px; }
-            .promise-icon { width: 48px; height: 48px; font-size: 22px; border-radius: 20px; }
-            .promise-text { font-size: 16px; }
-            .footer-note { font-size: 13px; }
-        }
+        body { font-family: system-ui; padding: 20px; background: #eef2f7; }
+        .card { max-width: 500px; margin: 0 auto; background: white; border-radius: 32px; padding: 24px; }
+        .avatar { width: 80px; height: 80px; border-radius: 40px; object-fit: cover; }
+        .fallback { width: 80px; height: 80px; background: #2b5876; border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; }
     </style>
 </head>
 <body>
-    <div class="profile-card" id="profileCard">
-        <div style="text-align: center; padding: 40px;">加载中...</div>
-    </div>
-
+    <div id="detail" class="card">加载中...</div>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const studentId = urlParams.get('id');
-
-        if (!studentId) {
-            document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">未指定学生ID</div>';
-        } else {
+        const id = new URLSearchParams(location.search).get('id');
+        if (!id) document.getElementById('detail').innerHTML = '未指定学生ID';
+        else {
             fetch('students.json')
-                .then(res => {
-                    if (!res.ok) throw new Error('无法加载数据');
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(data => {
-                    const student = data.find(s => s.id == studentId);
-                    if (!student) {
-                        document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">未找到该学生信息</div>';
-                        return;
-                    }
-
-                    let interestArray = [];
-                    if (student.interests) {
-                        if (Array.isArray(student.interests)) interestArray = student.interests;
-                        else interestArray = student.interests.split(',').map(s => s.trim()).filter(s => s);
-                    }
-                    
-                    const activitiesText = (student.activities || '无').replace(/\n/g, '；').replace(/\r/g, '');
-                    
-                    // 头像部分：支持照片，加载失败时回退到字母头像
-                    let avatarHtml;
-                    if (student.avatarUrl && student.avatarUrl !== '') {
-                        avatarHtml = `
-                            < img class="avatar-img" src="${student.avatarUrl}" alt="${student.name}" 
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="avatar-fallback" style="display: none;">${student.avatarInitial || student.name.substring(0,2).toUpperCase()}</div>
-                        `;
-                    } else {
-                        avatarHtml = `<div class="avatar-fallback">${student.avatarInitial || student.name.substring(0,2).toUpperCase()}</div>`;
-                    }
-                    
-                    const html = `
-                        <div class="header">
-                            <div class="avatar-container" style="position: relative;">
-                                ${avatarHtml}
-                                <span class="status-dot"></span>
-                            </div>
-                            <div class="title-section">
-                                <h1>${student.name} · 个人画像</h1>
-                                <span class="badge"><i class="fas fa-graduation-cap"></i> ${student.major || '管理学院B部'}</span>
-                            </div>
-                        </div>
-
-                        <div class="info-module">
-                            <div class="module-title"><i class="fas fa-user-circle"></i> 基本信息</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">学号</div><div class="info-value">${student.id || ''}</div></div>
-                                <div class="info-item"><div class="info-label">性别</div><div class="info-value">${student.gender || '未知'}</div></div>
-                                <div class="info-item"><div class="info-label">籍贯</div><div class="info-value">${student.hometown || ''}</div></div>
-                                <div class="info-item"><div class="info-label">政治面貌</div><div class="info-value">${student.politicalStatus || '群众'}</div></div>
-                                <div class="info-item"><div class="info-label">宿舍号</div><div class="info-value">${student.dormitory || '未知'}</div></div>
-                                ${student.contact ? `<div class="info-item"><div class="info-label">联系电话</div><div class="info-value">${student.contact}</div></div>` : ''}
-                            </div>
-                        </div>
-
-                        <div class="info-module">
-                            <div class="module-title"><i class="fas fa-heart"></i> 兴趣爱好</div>
-                            <div class="tag-cloud">
-                                ${interestArray.map(i => `<span class="tag">${i}</span>`).join('') || '<span class="tag">暂无</span>'}
-                            </div>
-                        </div>
-
-                        <div class="info-module">
-                            <div class="module-title"><i class="fas fa-chart-line"></i> 在校状况</div>
-                            <div class="promise-item">
-                                <div class="promise-icon"><i class="fas fa-star"></i></div>
-                                <div class="promise-text"><strong>✨ 高光时刻</strong><br>${student.grades || '暂无'}</div>
-                            </div>
-                            <div class="promise-item">
-                                <div class="promise-icon"><i class="fas fa-users"></i></div>
-                                <div class="promise-text"><strong>📋 学生干部经历</strong><br>${activitiesText}</div>
-                            </div>
-                        </div>
-
-                        <hr>
-                        <div class="footer-note">
-                            <i class="fas fa-mobile-alt"></i> 个人画像 · 数据实时更新
-                        </div>
+                    const s = data.find(s => s.id == id);
+                    if (!s) { document.getElementById('detail').innerHTML = '未找到学生'; return; }
+                    const avatarHtml = s.avatarUrl ? `< img class="avatar" src="${s.avatarUrl}" onerror="this.onerror=null; this.src='';">` : `<div class="fallback">${(s.avatarInitial || s.name.slice(0,2)).toUpperCase()}</div>`;
+                    document.getElementById('detail').innerHTML = `
+                        ${avatarHtml}
+                        <h1>${s.name}</h1>
+                        <p>学号：${s.id}</p >
+                        <p>性别：${s.gender || '未知'}</p >
+                        <p>籍贯：${s.hometown || ''}</p >
+                        <p>专业：${s.major || ''}</p >
+                        <p>高光时刻：${s.grades || '暂无'}</p >
+                        <p>干部经历：${(s.activities || '无').replace(/\n/g, '；')}</p >
                     `;
-                    document.getElementById('profileCard').innerHTML = html;
                 })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('profileCard').innerHTML = '<div style="text-align:center; padding:40px;">数据加载失败，请检查网络或稍后重试</div>';
-                });
+                .catch(e => { document.getElementById('detail').innerHTML = '数据加载失败'; console.error(e); });
         }
     </script>
 </body>
