@@ -110,11 +110,9 @@
         }
         let html = '';
         for (let s of filtered) {
-            const skillArray = s.skills ? s.skills.split(',').map(t => t.trim()) : [];
+            // 只显示兴趣爱好，避免技能重复
             const interestArray = s.interests ? s.interests.split(',').map(t => t.trim()) : [];
-            const allTags = [...skillArray, ...interestArray];
-            const tagHtml = allTags.map(tag => `<span class="tag">${escapeText(tag)}</span>`).join('');
-            // 只显示字母头像
+            const tagHtml = interestArray.map(tag => `<span class="tag">${escapeText(tag)}</span>`).join('');
             const avatarHtml = `<div class="card-avatar-fallback">${escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase())}</div>`;
             html += `<div class="student-card" onclick="location.href='student.html?id=${encodeURIComponent(s.id)}'">
                         ${avatarHtml}
