@@ -105,36 +105,83 @@
         document.getElementById('totalCount').innerText = studentsData.length;
         document.getElementById('visibleCount').innerText = filtered.length;
         const grid = document.getElementById('studentGrid');
+        grid.innerHTML = ''; // 清空
+
         if (filtered.length === 0) {
             grid.innerHTML = '<div class="no-result">😢 没有找到符合条件的同学</div>';
             return;
         }
-        let html = '';
+
         for (let s of filtered) {
-            // 只显示兴趣爱好，避免技能重复
-            const interestArray = s.interests ? s.interests.split(',').map(t => t.trim()) : [];
-            const tagHtml = interestArray.map(tag => `<span class="tag">${escapeText(tag)}</span>`).join('');
-            
-            // 头像：优先使用 avatarUrl（相对路径），加载失败时回退到字母头像
-            let avatarHtml;
+            // 创建卡片容器
+            const card = document.createElement('div');
+            card.className = 'student-card';
+            card.onclick = () => location.href = `student.html?id=${encodeURIComponent(s.id)}`;
+
+            // 头像部分
+            let avatarElement;
             if (s.avatarUrl && s.avatarUrl !== '') {
-                avatarHtml = `< img class="card-avatar" src="${s.avatarUrl}" alt="${escapeText(s.name)}" 
-                    onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">` +
-                    `<div class="card-avatar-fallback" style="display:none;">${escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase())}</div>`;
+                const img = document.createElement('img');
+                img.className = 'card-avatar';
+                img.src = s.avatarUrl;
+                img.alt = escapeText(s.name);
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    if (this.nextElementSibling) this.nextElementSibling.style.display = 'flex';
+                };
+                avatarElement = img;
+                // 后备字母头像
+                const fallback = document.createElement('div');
+                fallback.className = 'card-avatar-fallback';
+                fallback.style.display = 'none';
+                fallback.textContent = escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase());
+                card.appendChild(img);
+                card.appendChild(fallback);
             } else {
-                avatarHtml = `<div class="card-avatar-fallback">${escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase())}</div>`;
+                const fallback = document.createElement('div');
+                fallback.className = 'card-avatar-fallback';
+                fallback.textContent = escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase());
+                avatarElement = fallback;
+                card.appendChild(fallback);
             }
-            
-            html += `<div class="student-card" onclick="location.href='student.html?id=${encodeURIComponent(s.id)}'">
-                        ${avatarHtml}
-                        <h3>${escapeText(s.name)}</h3>
-                        <p><i class="fas fa-id-card"></i> ${escapeText(s.id)}</p >
-                        <p><i class="fas fa-map-marker-alt"></i> ${escapeText(s.hometown || '未知')}</p >
-                        <div class="major-tag"><i class="fas fa-graduation-cap"></i> ${escapeText(s.major || '专业未填')}</div>
-                        <div class="tags">${tagHtml}</div>
-                    </div>`;
+
+            // 姓名
+            const nameElem = document.createElement('h3');
+            nameElem.textContent = escapeText(s.name);
+            card.appendChild(nameElem);
+
+            // 学号
+            const idElem = document.createElement('p');
+            idElem.innerHTML = `<i class="fas fa-id-card"></i> ${escapeText(s.id)}`;
+            card.appendChild(idElem);
+
+            // 籍贯
+            const hometownElem = document.createElement('p');
+            hometownElem.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeText(s.hometown || '未知')}`;
+            card.appendChild(hometownElem);
+
+            // 专业标签
+            const majorTag = document.createElement('div');
+            majorTag.className = 'major-tag';
+            majorTag.innerHTML = `<i class="fas fa-graduation-cap"></i> ${escapeText(s.major || '专业未填')}`;
+            card.appendChild(majorTag);
+
+            // 兴趣爱好标签
+            const interestArray = s.interests ? s.interests.split(',').map(t => t.trim()) : [];
+            if (interestArray.length > 0) {
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'tags';
+                interestArray.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = escapeText(tag);
+                    tagsDiv.appendChild(span);
+                });
+                card.appendChild(tagsDiv);
+            }
+
+            grid.appendChild(card);
         }
-        grid.innerHTML = html;
     }
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
