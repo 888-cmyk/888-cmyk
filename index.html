@@ -27,15 +27,24 @@
         .search-box i { color: #8aa0bc; margin-right: 12px; }
         .search-box input { flex: 1; border: none; outline: none; font-size: 16px; background: transparent; padding: 12px 0; }
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .student-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); border-radius: 28px; padding: 20px; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; }
+        .student-card {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 20px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.7);
+            cursor: pointer;
+            text-align: center;  /* 内容居中 */
+        }
         .student-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.9); }
-        .card-avatar { width: 50px; height: 50px; border-radius: 20px; object-fit: cover; margin-bottom: 15px; }
-        .card-avatar-fallback { width: 50px; height: 50px; background: linear-gradient(135deg, #2b5876, #4e4376); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; color: white; margin-bottom: 15px; }
+        .card-avatar { width: 50px; height: 50px; border-radius: 20px; object-fit: cover; margin: 0 auto 15px auto; display: block; }
+        .card-avatar-fallback { width: 50px; height: 50px; background: linear-gradient(135deg, #2b5876, #4e4376); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; color: white; margin: 0 auto 15px auto; }
         .student-card h3 { font-size: 18px; font-weight: 700; color: #1a2c42; margin-bottom: 8px; }
-        .student-card p { font-size: 13px; color: #5f7a9a; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .student-card p { font-size: 13px; color: #5f7a9a; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .student-card p i { width: 20px; }
         .major-tag { display: inline-block; background: rgba(43,95,138,0.15); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #2b5f8a; margin-top: 8px; }
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: center; }
         .tag { background: rgba(67,108,145,0.12); padding: 4px 12px; border-radius: 30px; font-size: 11px; font-weight: 500; color: #2c5a7a; }
         .no-result { text-align: center; padding: 60px; color: #6c86a3; }
         footer { text-align: center; margin-top: 50px; font-size: 13px; color: #8aa0bc; }
@@ -105,7 +114,7 @@
         document.getElementById('totalCount').innerText = studentsData.length;
         document.getElementById('visibleCount').innerText = filtered.length;
         const grid = document.getElementById('studentGrid');
-        grid.innerHTML = ''; // 清空
+        grid.innerHTML = '';
 
         if (filtered.length === 0) {
             grid.innerHTML = '<div class="no-result">😢 没有找到符合条件的同学</div>';
@@ -113,13 +122,11 @@
         }
 
         for (let s of filtered) {
-            // 创建卡片容器
             const card = document.createElement('div');
             card.className = 'student-card';
             card.onclick = () => location.href = `student.html?id=${encodeURIComponent(s.id)}`;
 
-            // 头像部分
-            let avatarElement;
+            // 头像
             if (s.avatarUrl && s.avatarUrl !== '') {
                 const img = document.createElement('img');
                 img.className = 'card-avatar';
@@ -129,44 +136,36 @@
                     this.style.display = 'none';
                     if (this.nextElementSibling) this.nextElementSibling.style.display = 'flex';
                 };
-                avatarElement = img;
-                // 后备字母头像
+                card.appendChild(img);
                 const fallback = document.createElement('div');
                 fallback.className = 'card-avatar-fallback';
                 fallback.style.display = 'none';
                 fallback.textContent = escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase());
-                card.appendChild(img);
                 card.appendChild(fallback);
             } else {
                 const fallback = document.createElement('div');
                 fallback.className = 'card-avatar-fallback';
                 fallback.textContent = escapeText(s.avatarInitial || s.name.substring(0,2).toUpperCase());
-                avatarElement = fallback;
                 card.appendChild(fallback);
             }
 
-            // 姓名
             const nameElem = document.createElement('h3');
             nameElem.textContent = escapeText(s.name);
             card.appendChild(nameElem);
 
-            // 学号
             const idElem = document.createElement('p');
             idElem.innerHTML = `<i class="fas fa-id-card"></i> ${escapeText(s.id)}`;
             card.appendChild(idElem);
 
-            // 籍贯
             const hometownElem = document.createElement('p');
             hometownElem.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${escapeText(s.hometown || '未知')}`;
             card.appendChild(hometownElem);
 
-            // 专业标签
             const majorTag = document.createElement('div');
             majorTag.className = 'major-tag';
             majorTag.innerHTML = `<i class="fas fa-graduation-cap"></i> ${escapeText(s.major || '专业未填')}`;
             card.appendChild(majorTag);
 
-            // 兴趣爱好标签
             const interestArray = s.interests ? s.interests.split(',').map(t => t.trim()) : [];
             if (interestArray.length > 0) {
                 const tagsDiv = document.createElement('div');
